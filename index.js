@@ -44,23 +44,27 @@ const id = () => cont++
 const deck = []
 
 const encontrarCard = (nomeCard) => {
-    axios.get("https://api.scryfall.com/catalog/card-names")
-        .then((response) => {
-            console.log(response)
-            const encontrarCard = response.data.data.find(card => card === nomeCard)
-            if (encontrarCard) {
-                
-                deck.push({ id: id(), card: encontrarCard })
-            }
-            console.log(deck)
-        })
-        .catch((error) => {
-            console.log(error)
-        })
-
-
+    return new Promise((resolve, reject) => {
+        axios.get("https://api.scryfall.com/catalog/card-names")
+            .then((response) => {
+                const encontrarCard = response.data.data.find(card => card === nomeCard)
+                if (encontrarCard) {
+                    deck.push({ id: id(), card: encontrarCard })
+                }
+                resolve()
+            })
+            .catch((error) => {
+                console.log(error)
+                reject()
+            })
+    })
 }
-encontrarCard("A Little Chat")
-encontrarCard("Thermo-Alchemist")
+Promise.all([encontrarCard('"Ach! Hans, Run!"'), encontrarCard("Thermo-Alchemist")]).then(() => console.log(deck))
 
 
+// encontrarCard("Anowon, the Ruin Thief")
+// encontrarCard("Whip-Spine Drake")
+
+
+
+// axios.get("https://api.scryfall.com/catalog/card-names")
